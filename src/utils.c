@@ -6,7 +6,7 @@
 /*   By: tzi-qi <tzi-qi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 18:43:51 by tzi-qi            #+#    #+#             */
-/*   Updated: 2022/11/22 18:44:50 by tzi-qi           ###   ########.fr       */
+/*   Updated: 2022/11/22 21:50:42 by tzi-qi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,12 +41,11 @@ void	free_twod(char **twod)
 	free(twod);
 }
 
-void	free_semua(t_data *data, int f1, int f2)
+void	free_semua(t_data *data)
 {
 	free_twod(data->envp);
 	free_twod(data->path);
-	close(data->pipeline[0]);
-	close(data->pipeline[1]);
-	close(f1);
-	close(f2);
+	free_twod((char **)data->pipes);
+	close(data->f1);
+	close(data->f2);
 }
