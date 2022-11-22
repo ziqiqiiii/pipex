@@ -6,10 +6,10 @@ CFLAGS		= -Wall -Wextra -Werror
 
 RM 			= rm -r
 
-SRC_DIR	 	= ./
+SRC_DIR	 	= ./src
 OBJ_DIR		= ./obj
 
-SRCS		= pipex.c 
+SRCS		= pipex.c path.c utils.c
 OBJS		= $(SRCS:%.c=$(OBJ_DIR)/%.o)
 
 
