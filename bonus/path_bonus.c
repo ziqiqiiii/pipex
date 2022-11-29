@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   path.c                                             :+:      :+:    :+:   */
+/*   path_bonus.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tzi-qi <tzi-qi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 21:22:22 by tzi-qi            #+#    #+#             */
-/*   Updated: 2022/11/22 21:22:24 by tzi-qi           ###   ########.fr       */
+/*   Updated: 2022/11/29 21:22:19 by tzi-qi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../includes/pipex.h"
+#include "../includes/pipex_bonus.h"
 
 char	*split_argv(t_data *data, char *argv)
 {
@@ -55,8 +55,10 @@ void	check_path(t_data *data, int argc, char **argv)
 
 	cmd = ft_calloc(data->ncmd + 1, sizeof(char *));
 	i = 1;
+	if (data->hd == 1)
+		i = 2;
 	a = -1;
-	while (++i < argc -1)
+	while (++i < argc - 1)
 	{
 		join = exist_or_not(data, argv[i]);
 		if (join == NULL)
@@ -71,6 +73,21 @@ void	check_path(t_data *data, int argc, char **argv)
 	}
 	cmd[data->ncmd] = NULL;
 	data->path = cmd;
+}
+
+void	complete_path(char **split, t_data *data)
+{
+	int		i;
+	char	*temp;
+
+	i = -1;
+	while (split[++i])
+	{
+		temp = ft_strjoin(split[i], "/");
+		free(split[i]);
+		split[i] = temp;
+	}
+	data->envp = split;
 }
 
 void	split_path(t_data *data, int argc, char **argv, char **envp)
@@ -97,13 +114,6 @@ void	split_path(t_data *data, int argc, char **argv, char **envp)
 		ft_putstr_fd("Wtf why you unset PATH\n", 2);
 		exit (1);
 	}
-	i = -1;
-	while (split[++i])
-	{
-		temp = ft_strjoin(split[i], "/");
-		free(split[i]);
-		split[i] = temp;
-	}
-	data->envp = split;
+	complete_path(split, data);
 	check_path(data, argc, argv);
 }

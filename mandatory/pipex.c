@@ -6,7 +6,7 @@
 /*   By: tzi-qi <tzi-qi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 21:34:29 by tzi-qi            #+#    #+#             */
-/*   Updated: 2022/11/22 21:49:23 by tzi-qi           ###   ########.fr       */
+/*   Updated: 2022/11/29 20:18:10 by tzi-qi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,9 +18,9 @@ void	eldest_child(int f1, char *argv, t_data *data, char **envp)
 
 	dup2(f1, 0);
 	close(f1);
-	dup2(data->pipes[0][1], 1);
-	close(data->pipes[0][0]);
-	close(data->pipes[0][1]);
+	dup2(data->pipe1[1], 1);
+	ft_close(data->pipe1[1]);
+	ft_close(data->pipe1[0]);
 	cmd = ft_split(argv, ' ');
 	if (execve(data->path[0], cmd, envp) == -1)
 	{
@@ -35,9 +35,9 @@ void	youngest(int f2, char *argv, t_data *data, char **envp)
 
 	dup2(f2, 1);
 	close(f2);
-	dup2(data->pipes[0][0], 0);
-	close(data->pipes[0][0]);
-	close(data->pipes[0][1]);
+	dup2(data->pipe1[0], 0);
+	ft_close(data->pipe1[0]);
+	ft_close(data->pipe1[1]);
 	cmd = ft_split(argv, ' ');
 	if (execve(data->path[1], cmd, envp) == -1)
 	{
@@ -46,60 +46,29 @@ void	youngest(int f2, char *argv, t_data *data, char **envp)
 	}
 }
 
-// void	middle_children(char *argv, t_data *data, char **envp)
-// {
-// 	char	**cmd;
-
-// 	dup2(data->pipe2[0], 1);
-// 	dup2(data->pipe2[1], 0);
-// 	close(data->pipe2[0]);
-// 	close(data->pipe2[1]);
-// 	cmd = ft_split(argv, ' ');
-// 	if (execve(data->path[1], cmd, envp) == -1)
-// 	{
-// 		ft_putstr_fd("Error:\n", 2);
-// 		exit (1);
-// 	}
-// }
-
 void	pipex(char **argv, t_data *data, char **envp)
 {
 	int		status;
 	pid_t	*children;
-	int		i;
 
 	children = ft_calloc(data->ncmd + 1, sizeof(pid_t));
 	children[data->ncmd] = '\0';
-	if (pipe(data->pipes[0]) < 0)
-		ft_putstr_fd("Error: Error childreneating The Interprocess \
-		Communications Pipe\n", 2);
+	if (pipe(data->pipe1) < 0)
+		ft_putstr_fd("Error: can't fork a child process\n", 2);
 	children[0] = fork();
 	if (children[0] < 0)
 		return (perror("Fork: 1"));
 	if (children[0] == 0)
-	{
-		printf("in the child process 1\n");
 		eldest_child(data->f1, argv[2], data, envp);
-	}
 	children[1] = fork();
 	if (children[1] < 0)
 		return (perror("Fork: 2"));
 	if (children[1] == 0)
-	{
-		printf("in the child process 2\n");
 		youngest(data->f2, argv[3], data, envp);
-	}
-	close(data->pipes[0][0]);
-	close(data->pipes[0][1]);
+	ft_close(data->pipe1[1]);
+	ft_close(data->pipe1[0]);
 	waitpid(-1, &status, 0);
-}
-
-void	init_data(int argc, char **argv, char **envp, t_data *data)
-{
-	data->ncmd = argc - 3;
-	data->pipes = ft_calloc(data->ncmd, sizeof(data->pipe1));
-	data->pipes = NULL;
-	split_path(data, argc, argv, envp);
+	free(children);
 }
 
 int	main(int argc, char **argv, char **envp)
@@ -117,8 +86,3 @@ int	main(int argc, char **argv, char **envp)
 	free_semua(&data);
 	return (0);
 }
-
-//Makefile (done)
-//error handling (done)
-//child process -> execve -> parent process (done)
-//middle children 
