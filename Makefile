@@ -1,4 +1,5 @@
 NAME		= pipex
+BONUS_NAME	= pipex_bonus
 
 # MANDATORY
 SRC_DIR		= ./mandatory
@@ -28,9 +29,13 @@ LIB			= -Llibft -lft
 
 
 all: $(NAME)
+bonus: $(BONUS_NAME)
 
 $(NAME): $(OBJS) libft/libft.a
 		$(CCD) $(CFLAGS) $(OBJS) $(INCLUDES) $(LIB) -o $@
+
+$(BONUS_NAME): $(B_OBJS) $(GNL_OBJ) libft/libft.a
+	$(CCD) $(CFLAGS) $(B_OBJS) $(GNL_OBJ) $(INCLUDES) $(LIB) -o $(BONUS_NAME)
 
 libft/libft.a:
 	@make all -C libft
@@ -47,9 +52,6 @@ $(B_OBJ_DIR)/%.o: $(GNL_DIR)/%.c
 	@mkdir -p $(OBJ_DIR)
 	@$(CCD) $(CFLAGS) $(INCLUDES) -c $< -o $@
 
-bonus: $(B_OBJS) $(GNL_OBJ) libft/libft.a
-	$(CCD) $(CFLAGS) $(B_OBJS) $(GNL_OBJ) $(INCLUDES) $(LIB) -o $(NAME)
-
 test:
 	make && ./pipex infile "ls -l" "wc -l" outfile 
 
@@ -57,7 +59,7 @@ clean:
 	$(RM) $(OBJ_DIR) $(B_OBJ_DIR)
 
 fclean: clean
-	$(RM) $(NAME)
+	$(RM) $(NAME) $(BONUS_NAME)
 	@make fclean -C libft
 
 re: fclean all

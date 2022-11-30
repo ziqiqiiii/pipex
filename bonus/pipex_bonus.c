@@ -6,7 +6,7 @@
 /*   By: tzi-qi <tzi-qi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 21:34:29 by tzi-qi            #+#    #+#             */
-/*   Updated: 2022/11/29 21:06:13 by tzi-qi           ###   ########.fr       */
+/*   Updated: 2022/11/30 22:45:49 by tzi-qi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,13 +24,14 @@ void	here_doc(t_data *data, char *limiter)
 		line = get_next_line(0);
 		if (line == NULL)
 			exit (1);
-		ft_putstr_fd(line, fd);
-		if (ft_strncmp(line, limiter, ft_strlen(limiter)) == 0)
+		if ((ft_strlen(line) == ft_strlen(limiter) + 1) \
+		&& ft_strncmp(line, limiter, ft_strlen(limiter)) == 0)
 		{
 			free(line);
 			ft_close(fd);
 			break ;
 		}
+		ft_putstr_fd(line, fd);
 		free(line);
 	}
 }
@@ -63,10 +64,15 @@ int	main(int argc, char **argv, char **envp)
 	error_checking(&data, argc, argv);
 	init_data(argc, argv, envp, &data);
 	if (data.hd == 1)
+	{
 		data.f1 = ft_open(".here_doc_tmp", O_RDONLY, 0644);
+		data.f2 = ft_open(argv[argc - 1], O_CREAT | O_RDWR | O_APPEND, 0666);
+	}
 	else
+	{
 		data.f1 = ft_open(argv[1], O_RDONLY, 0666);
-	data.f2 = ft_open(argv[argc - 1], O_CREAT | O_RDWR | O_TRUNC, 0666);
+		data.f2 = ft_open(argv[argc - 1], O_CREAT | O_RDWR | O_TRUNC, 0666);
+	}
 	pipex(argc, argv, &data, envp);
 	free_semua(&data);
 	return (0);

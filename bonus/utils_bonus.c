@@ -6,7 +6,7 @@
 /*   By: tzi-qi <tzi-qi@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2022/11/22 18:43:51 by tzi-qi            #+#    #+#             */
-/*   Updated: 2022/11/29 12:59:58 by tzi-qi           ###   ########.fr       */
+/*   Updated: 2022/11/30 17:49:55 by tzi-qi           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,4 +69,6 @@ void	free_semua(t_data *data)
 	free_twod(data->path);
 	ft_close(data->f1);
 	ft_close(data->f2);
+	if (data->hd == 1)
+		unlink(".here_doc_tmp");
 }
